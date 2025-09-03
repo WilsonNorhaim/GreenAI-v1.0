@@ -491,7 +491,7 @@
         <main class="chat-container">
             <div class="chat-messages" id="chatMessages">
                 <div class="message ai-message">
-                    <div>Привет! Я GreenAI, ваш помощник в мире Greenwel RP. Задавайте вопросы о проекте, и я постараюсь помочь!</div>
+                    <div>Привет! Я GreenAI, ваш помощник Greenwel RP. Задавайте вопросы о проекте, и я постараюсь помочь!</div>
                     <div class="message-info">
                         <span>GreenAI</span>
                         <span>только что</span>
@@ -886,7 +886,9 @@
             // Восстановление истории чата
             if (chatHistory.length > 0) {
                 chatHistory.forEach(msg => {
-                    addMessageToChat(msg.text, msg.sender, msg.timestamp, false);
+                    // Преобразуем число (timestamp) обратно в объект Date
+                    const dateObject = new Date(msg.timestamp);
+                    addMessageToChat(msg.text, msg.sender, dateObject, false);
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
