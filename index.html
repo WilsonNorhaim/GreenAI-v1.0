@@ -3,1245 +3,1385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenAI - Wilson Organization</title>
+    <title>Wilson AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* === GLOBAL VARIABLES === */
         :root {
-            --primary-green: #1abc9c;
-            --dark-green: #16a085;
-            --light-green: #2ecc71;
-            --primary-blue: #3498db;
-            --dark-blue: #2980b9;
-            --light-gray: #f5f5f5;
-            --dark-gray: #34495e;
-            --text-color: #2c3e50;
+            --bg-gradient-start: #0a0a0f;
+            --bg-gradient-mid: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --glass-bg: rgba(25, 25, 35, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.12);
+            --accent-primary: #7c5cff;
+            --accent-hover: #6a4ae0;
+            --accent-glow: rgba(124, 92, 255, 0.4);
+            --accent-red: #ff4757;
+            --text-primary: #f5f5f7;
+            --text-secondary: #b8b8d0;
+            --text-muted: #787890;
+            --user-msg-bg: rgba(124, 92, 255, 0.15);
+            --bot-msg-bg: rgba(35, 35, 50, 0.8);
+            --success: #34c759;
+            --warning: #ff9f0a;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px var(--accent-glow);
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-        
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* === LIQUID GLASS BACKGROUND === */
         body {
-            background: url('image/greenforest.png') no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+            background-size: 400% 400%;
+            animation: gradientFlow 18s ease infinite;
+            color: var(--text-primary);
             height: 100vh;
+            display: flex;
             overflow: hidden;
             position: relative;
         }
-        
+
+        /* Animated gradient */
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles effect */
         body::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.92);
-            z-index: -1;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(124, 92, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 71, 87, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(100, 100, 150, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: rgba(26, 188, 156, 0.95);
-            color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 100;
+
+        /* === LIQUID GLASS CARD EFFECT === */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-top-color: var(--glass-highlight);
+            border-left-color: var(--glass-highlight);
+            box-shadow: var(--shadow-soft), var(--shadow-glow);
             position: relative;
+            overflow: hidden;
         }
-        
-        .logo-container {
+
+        .glass::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                var(--glass-highlight) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            animation: liquidShine 8s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes liquidShine {
+            0%, 100% { transform: rotate(45deg) translateX(-100%); }
+            50% { transform: rotate(45deg) translateX(100%); }
+        }
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 72px;
             display: flex;
+            flex-direction: column;
             align-items: center;
+            padding: 16px 8px;
             gap: 12px;
+            flex-shrink: 0;
+            z-index: 20;
         }
-        
-        .logo {
-            width: 42px;
-            height: 42px;
-            background: #fff;
-            border-radius: 50%;
+
+        .sidebar-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: var(--primary-green);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: rgba(255,255,255,0.03);
         }
-        
-        .header-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+
+        .sidebar-icon:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            transform: scale(1.05);
         }
-        
-        .header-org {
-            font-size: 0.8rem;
-            opacity: 0.9;
+
+        .sidebar-icon.active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
-        
-        .mobile-menu-btn {
-            display: none;
+
+        .sidebar-icon.active::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            width: 3px;
+            height: 20px;
+            background: white;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .sidebar-divider {            width: 32px;
+            height: 1px;
+            background: var(--glass-border);
+            margin: 4px 0;
+        }
+
+        .sidebar-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: auto;
+            background: linear-gradient(135deg, var(--accent-red), #ff7675);
+            overflow: hidden;
+        }
+
+        .sidebar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-avatar .avatar-fallback {
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        /* === HISTORY PANEL === */
+        .history-panel {
+            position: fixed;
+            left: 72px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-panel.open {
+            transform: translateX(0);
+        }
+
+        .history-header {            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .history-header h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .history-close {
             background: none;
             border: none;
-            color: white;
-            font-size: 1.5rem;
+            color: var(--text-muted);
             cursor: pointer;
-        }
-        
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 0;
-            position: relative;
-        }
-        
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            height: 100%;
-            width: 280px;
-            padding: 70px 20px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            background: white;
-            z-index: 99;
-            transition: transform 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .sidebar.active {
-            transform: translateX(280px);
-        }
-        
-        .session-info {
-            padding: 15px;
-            background: var(--light-gray);
-            border-radius: 12px;
-        }
-        
-        .session-id {
-            font-size: 0.75rem;
-            margin-bottom: 15px;
-            word-break: break-all;
-            background: rgba(0, 0, 0, 0.05);
-            padding: 10px;
+            font-size: 1.4rem;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-        }
-        
-        .btn {
-            padding: 12px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .btn-primary {
-            background: var(--primary-green);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--dark-green);
-        }
-        
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-        
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-            overflow: hidden;
-            width: 100%;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 15px;
-        }
-        
-        .message {
-            max-width: 85%;
-            padding: 14px 18px;
-            border-radius: 18px;
-            line-height: 1.4;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-            font-size: 0.95rem;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .user-message {
-            align-self: flex-end;
-            background: var(--primary-blue);
-            color: white;
-            border-bottom-right-radius: 6px;
-        }
-        
-        .ai-message {
-            align-self: flex-start;
-            background: var(--light-gray);
-            color: var(--text-color);
-            border-bottom-left-radius: 6px;
-        }
-        
-        .message-info {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .chat-input-container {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.95);
-            border-top: 1px solid #eee;
-        }
-        
-        .chat-input {
-            flex: 1;
-            padding: 14px 16px;
-            border: 1px solid #ddd;
-            border-radius: 24px;
-            outline: none;
-            resize: none;
-            max-height: 120px;
-            overflow-y: auto;
-            font-size: 1rem;
-            background: white;
-        }
-        
-        .send-btn {
-            padding: 0;
-            border: none;
-            border-radius: 50%;
-            background: var(--primary-green);
-            color: white;
-            cursor: pointer;
-            width: 46px;
-            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            transition: 0.2s;
         }
-        
-        .send-btn:hover {
-            background: var(--dark-green);
+
+        .history-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
         }
-        
-        .typing-indicator {
-            display: none;
-            padding: 12px 18px;
-            background: var(--light-gray);
-            border-radius: 18px;
-            align-self: flex-start;
-            margin-bottom: 15px;
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 12px;
         }
-        
-        .typing-dots {
+
+        .history-list::-webkit-scrollbar { width: 4px; }
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 2px;
+        }
+
+        .history-item {
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.2s;            border: 1px solid transparent;
+        }
+
+        .history-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--glass-border);
+        }
+
+        .history-item.active {
+            background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(124,92,255,0.1));
+            border-color: var(--accent-primary);
+        }
+
+        .history-item-title {
+            font-weight: 500;
+            font-size: 0.92rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
             display: flex;
-            gap: 4px;
+            justify-content: space-between;
         }
-        
-        .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--dark-gray);
-            border-radius: 50%;
-            animation: typingAnimation 1.4s infinite ease-in-out;
-        }
-        
-        .dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes typingAnimation {
-            0%, 100% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-        
-        .tools-container {
-            padding: 15px 0;
+
+        .history-actions {
+            padding: 14px;
+            border-top: 1px solid var(--glass-border);
             display: flex;
-            flex-direction: column;
             gap: 10px;
         }
-        
-        .tool-btn {
-            padding: 12px 15px;
-            border: none;
+
+        .history-btn {
+            flex: 1;
+            padding: 10px;
             border-radius: 10px;
-            background: var(--primary-blue);
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .history-btn:hover {            background: rgba(255,255,255,0.08);
+            border-color: var(--accent-primary);
+        }
+
+        .history-btn.danger {
+            color: var(--accent-red);
+            border-color: rgba(255, 71, 87, 0.3);
+        }
+
+        .history-btn.danger:hover {
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* === MAIN CHAT WRAPPER === */
+        .chat-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* === HEADER === */
+        .chat-header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 15;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .bot-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--accent-red), #ff7675);
+        }
+
+        .bot-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bot-avatar .avatar-fallback {
+            font-weight: 700;
             color: white;
+            font-size: 1.2rem;
+        }
+
+        .header-info h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .header-info span {
+            font-size: 0.82rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-info span::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: var(--success);            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .header-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.2s ease;
-            text-align: left;
-            font-size: 0.9rem;
+            justify-content: center;
+            transition: all 0.2s;
         }
-        
-        .tool-btn:hover {
-            background: var(--dark-blue);
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: var(--text-primary);
+            transform: translateY(-1px);
         }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 98;
-        }
-        
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .header-title {
-                font-size: 1.2rem;
-            }
-            
-            .logo {
-                width: 38px;
-                height: 38px;
-                font-size: 0.9rem;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-            
-            .chat-input {
-                padding: 12px 16px;
-                font-size: 0.95rem;
-            }
-            
-            .send-btn {
-                width: 44px;
-                height: 44px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header-title {
-                font-size: 1.1rem;
-            }
-            
-            .header-org {
-                font-size: 0.75rem;
-            }
-            
-            .message {
-                max-width: 95%;
-            }
-            
-            .chat-messages {
-                padding: 12px;
-            }
-            
-            .chat-input-container {
-                padding: 12px;
-            }
-        }
-        
-        .suggestion-chips {
+
+        /* === MESSAGES AREA === */
+        .chat-messages {
+            flex: 1;
+            padding: 20px 28px 24px;
+            overflow-y: auto;
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
+            flex-direction: column;
+            gap: 6px;
+            scroll-behavior: smooth;
         }
-        
-        .suggestion-chip {
-            background: var(--light-green);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .suggestion-chip:hover {
-            background: var(--dark-green);
-        }
-        
-        .math-result {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 8px;
-            border-left: 2px solid var(--primary-green);
-            font-size: 0.9rem;
-        }
-        
-        /* Улучшенная полоса прокрутки */
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-        
+
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
         .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--primary-green);
-            border-radius: 10px;
+            background: var(--glass-border);            border-radius: 3px;
         }
+
+        .message-group {
+            display: flex;
+            gap: 14px;
+            padding: 6px 0;
+            animation: messageSlide 0.25s ease;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-group.bot { flex-direction: row; }
+        .message-group.user { flex-direction: row-reverse; }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--accent-red), #ff7675);
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-avatar .avatar-fallback {
+            font-weight: 600;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .message-group.user .message-avatar {
+            background: linear-gradient(135deg, var(--accent-primary), #6a4ae0);
+        }
+
+        .message-content {
+            max-width: 78%;
+            display: flex;
+            flex-direction: column;            gap: 5px;
+        }
+
+        .message-group.user .message-content { align-items: flex-end; }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .message-group.user .message-header { flex-direction: row-reverse; }
+
+        .username {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.88rem;
+        }
+
+        .message-group.bot .username { color: #ff7a8a; }
+        .message-group.user .username { color: var(--accent-primary); }
+
+        .timestamp {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
+
+        .message-bubble {
+            padding: 13px 17px;
+            border-radius: 16px;
+            font-size: 0.96rem;
+            line-height: 1.55;
+            position: relative;
+        }
+
+        .message-group.bot .message-bubble {
+            background: var(--bot-msg-bg);
+            border: 1px solid var(--glass-border);
+            border-top-left-radius: 6px;
+        }
+
+        .message-group.user .message-bubble {
+            background: var(--user-msg-bg);
+            border: 1px solid rgba(124, 92, 255, 0.3);
+            border-top-right-radius: 6px;
+        }
+        /* Message actions on hover */
+        .message-actions {
+            display: flex;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            padding: 2px 0 0;
+        }
+
+        .message-group:hover .message-actions { opacity: 1; }
+        .message-group.user .message-actions { justify-content: flex-end; }
+
+        .action-btn {
+            padding: 5px 9px;
+            border-radius: 7px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+        }
+
+        .action-btn.liked { color: var(--accent-red); }
+        .reaction-count { font-size: 0.73rem; }
+
+        /* === TYPING INDICATOR with SPINNER === */
+        .typing-indicator {
+            display: none;
+            padding: 4px 0 8px;
+        }
+
+        .typing-indicator.active { display: flex; align-items: flex-start; gap: 14px; }
+
+        .typing-indicator .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-red), #ff7675);
+            display: flex;
+            align-items: center;
+            justify-content: center;            flex-shrink: 0;
+        }
+
+        .typing-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 78%;
+        }
+
+        .typing-bubble {
+            padding: 12px 16px;
+            background: var(--bot-msg-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            border-top-left-radius: 6px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            min-width: 80px;
+        }
+
+        .typing-bubble span {
+            width: 7px;
+            height: 7px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-bubble span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-bubble span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-bubble span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Google-style spinner under typing text */
+        .typing-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .typing-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* === INPUT AREA === */
+        .input-area {
+            padding: 16px 24px 22px;
+            position: relative;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            border-radius: 18px;
+            padding: 10px 14px;
+            transition: all 0.25s;
+            border: 1px solid var(--glass-border);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding: 6px 2px;
+            resize: none;
+            outline: none;
+            max-height: 140px;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .input-wrapper textarea::placeholder {
+            color: var(--text-muted);            opacity: 0.9;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 4px;
+            padding: 3px 0;
+            align-items: center;
+        }
+
+        .input-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .input-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+        }
+
+        .input-btn.send {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .input-btn.send:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        .input-btn.send:disabled {
+            background: var(--glass-border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .input-hint {
+            text-align: center;
+            font-size: 0.73rem;
+            color: var(--text-muted);            margin-top: 10px;
+            opacity: 0.85;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            padding: 10px;
+            opacity: 0.7;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .history-panel { left: 0; width: 100%; max-width: 340px; }
+            .message-content { max-width: 92%; }
+            .chat-header { padding: 14px 18px; }
+            .chat-messages { padding: 16px 20px 20px; }
+            .input-area { padding: 14px 18px 20px; }
+            .header-info h1 { font-size: 1.05rem; }
+        }
+
+        @media (max-width: 480px) {
+            .header-actions { gap: 4px; }
+            .header-btn { width: 34px; height: 34px; border-radius: 9px; }
+            .input-wrapper { padding: 8px 12px; }
+            .input-btn { width: 34px; height: 34px; border-radius: 9px; }
+        }
+
+        /* === UTILITIES === */
+        .hidden { display: none !important; }
+        .fade-in { animation: messageSlide 0.3s ease; }
         
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: var(--dark-green);
+        /* Logo placeholder styling */
+        .logo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-red), #ff7675);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="logo">G</div>
-            <div>
-                <div class="header-title">GreenAI</div>
-                <div class="header-org">Wilson Organization</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass">
+        <div class="sidebar-icon active" id="btnChat" title="Чат" onclick="toggleHistory(false)">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="sidebar-icon" id="btnHistory" title="История" onclick="toggleHistory(true)">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="sidebar-icon" title="Настройки">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-icon" title="Справка">
+            <i class="fas fa-question"></i>
+        </div>
+        <div class="sidebar-avatar" title="Профиль">
+            <img src="wilson.png" alt="Wilson" onerror="this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>W</div>'">
+        </div>
+    </aside>
+
+    <!-- HISTORY PANEL -->
+    <div class="history-panel glass" id="historyPanel">
+        <div class="history-header">
+            <h3>📚 История</h3>
+            <button class="history-close" onclick="toggleHistory(false)">×</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+        <div class="history-actions">
+            <button class="history-btn" onclick="createNewSession()">+ Новый</button>
+            <button class="history-btn danger" onclick="clearAllHistory()">Очистить</button>
+        </div>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="toggleHistory(false)"></div>
+
+    <!-- MAIN CHAT -->
+    <main class="chat-wrapper">
+        
+        <!-- HEADER -->
+        <header class="chat-header glass">
+            <div class="header-left">
+                <div class="bot-avatar">
+                    <img src="wilson.png" alt="Wilson" onerror="this.parentElement.innerHTML='<div class=\\'logo-placeholder\\'>W</div>'">
+                </div>
+                <div class="header-info">
+                    <h1>Wilson AI</h1>
+                    <span id="connectionStatus">Онлайн</span>
+                </div>            </div>
+            <div class="header-actions">
+                <button class="header-btn" title="История" onclick="toggleHistory(true)">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="header-btn" title="Новый чат" onclick="createNewSession()">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="header-btn" title="Экспорт" onclick="exportChat()">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MESSAGES -->
+        <div class="chat-messages" id="chatBox"></div>
+
+        <!-- TYPING INDICATOR with SPINNER -->
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">
+                <img src="wilson.png" alt="W" onerror="this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>W</div>'">
+            </div>
+            <div class="typing-content">
+                <div class="typing-bubble">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="typing-text">
+                    Wilson печатает
+                    <div class="typing-spinner"></div>
+                </div>
             </div>
         </div>
-    </header>
-    
-    <div class="main-container">
-        <aside class="sidebar" id="sidebar">
-            <div class="session-info">
-                <h3>Текущая сессия</h3>
-                <div class="session-id" id="sessionId">Загрузка...</div>
-                <button class="btn btn-danger" id="clearSessionBtn">
-                    <i class="fas fa-trash"></i> <span>Удалить историю</span>
-                </button>
+
+        <!-- INPUT AREA -->
+        <div class="input-area">
+            <div class="input-wrapper glass">
+                <textarea 
+                    id="userInput" 
+                    placeholder="Спросите о вулканах, кальдерах или чём-то ещё..." 
+                    rows="1"
+                    oninput="handleInput()"
+                ></textarea>
+                <div class="input-actions">
+                    <button class="input-btn" title="Прикрепить" onclick="showTemporaryFeedback('Функция в разработке', '#faa61a')">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-btn send" id="sendBtn" onclick="sendMessage()" disabled>
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </div>            </div>
+            <div class="input-hint">
+                <i class="fas fa-keyboard"></i> 
+                <strong>Enter</strong> — отправить • <strong>Shift+Enter</strong> — новая строка
             </div>
-            
-            <div class="tools-container">
-                <button class="tool-btn" id="newChatBtn">
-                    <i class="fas fa-plus"></i> <span>Новый чат</span>
-                </button>
-                <button class="tool-btn" id="exportChatBtn">
-                    <i class="fas fa-download"></i> <span>Экспорт чата</span>
-                </button>
-            </div>
-        </aside>
-        
-        <main class="chat-container">
-            <div class="chat-messages" id="chatMessages">
-                <div class="message ai-message">
-                    <div>Привет! Я GreenAI, ваш помощник Greenwel RP. Задавайте вопросы о проекте, и я постараюсь помочь!</div>
-                    <div class="message-info">
-                        <span>GreenAI</span>
-                        <span>только что</span>
-                    </div>
-                    <div class="suggestion-chips">
-                        <div class="suggestion-chip" data-question="Что такое Гринвель РП?">Что такое Гринвель?</div>
-                        <div class="suggestion-chip" data-question="Как создать страну?">Создание страны</div>
-                        <div class="suggestion-chip" data-question="Какие правила?">Правила проекта</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="typing-indicator" id="typingIndicator">
-                <div class="typing-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-            </div>
-            
-            <div class="chat-input-container">
-                <textarea class="chat-input" id="chatInput" placeholder="Введите ваш вопрос..." rows="1"></textarea>
-                <button class="send-btn" id="sendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </main>
-    </div>
-    
-    <div class="overlay" id="overlay"></div>
+        </div>
+
+        <footer class="footer">
+            Wilson Corporation © 2026 • v2.3.0
+        </footer>
+
+    </main>
 
     <script>
-        // Улучшенная база знаний с ключевыми словами
-        const knowledgeBase = [
-    {
-        keywords: ["гринвель", "greenwel", "гривнель", "гринвел", "гринвель рп", "что такое"],
-        answer: "Гринвель РП – это ролевая игра в страны, где можно проявить свои лидерские качества или создать свою страну и историю. Это возможность погрузиться в мир политики, экономики и дипломатии."
-    },
-    {
-        keywords: ["вступить", "присоединиться", "начать играть", "как начать", "как играть", "как вступить в гринвель"],
-        answer: "Для вступления в ролевую игру нужно использовать бота @Greenwelbot. После этого вы сможете создать свою страну, компанию или военную организацию, заполнив соответствующую анкету."
-    },
-    {
-        keywords: ["анкета страны", "создать страну", "страна анкета", "новая страна"],
-        answer: `Для создания страны нужно заполнить анкету с хештегом #анкета_для_страны. Обязательные поля:
-• Название страны
-• Столица
-• Численность населения (1.000-5.000.000)
-• Бюджет (10-35 млрд)
-• Численность армии (0-75.000)
-• Количество танков (0-250)
-• Количество вертолётов (0-75)
-• Количество флота (0-205)
-• Количество БТР (0-225)
-• Количество истребителей (0-50)
-• Президент
-• Валюта
-• Религия
-• Язык
-• Флаг
-• Фото президента
-• Ссылка на телеграм-канал страны.`
-    },
-    {
-        keywords: ["население страны", "численность населения", "сколько людей", "популяция"],
-        answer: "Численность населения страны должна быть в диапазоне от 1.000 до 5.000.000 человек. Это реалистичный диапазон, позволяющий балансировать игру."
-    },
-    {
-        keywords: ["бюджет страны", "финансы страны", "деньги страны", "капитал"],
-        answer: "Бюджет страны должен быть в диапазоне от 10 до 35 миллиардов. Это стартовый бюджет, который можно увеличивать через экономическое развитие."
-    },
-    {
-        keywords: ["армия страны", "военные", "солдаты", "войска", "численность армии"],
-        answer: "Численность армии может быть от 0 до 75.000 солдат. Размер армии влияет на обороноспособность и возможности ведения войн."
-    },
-    {
-        keywords: ["танки", "танков", "бронетехника"],
-        answer: "Страна может иметь от 0 до 250 танков. Танки - основная ударная сила сухопутных войск."
-    },
-    {
-        keywords: ["вертолеты", "вертолётов", "авиация"],
-        answer: "Страна может иметь от 0 до 75 вертолётов. Вертолёты обеспечивают мобильность и поддержку с воздуха."
-    },
-    {
-        keywords: ["флот", "корабл", "флота"],
-        answer: "Количество кораблей флота может быть от 0 до 205 единиц. Флот необходим для контроля морских территорий."
-    },
-    {
-        keywords: ["бтр", "бронетранспортер", "бронетранспортёр"],
-        answer: "Страна может иметь от 0 до 225 бронетранспортёров (БТР). БТР используются для транспортировки войск."
-    },
-    {
-        keywords: ["истребители", "самолет", "авиация"],
-        answer: "Страна может иметь от 0 до 50 истребителей. Истребители обеспечивают превосходство в воздухе."
-    },
-    {
-        keywords: ["запрещено", "нельзя", "запрет", "ограничения", "запрещено в анкете", "реальные компании"],
-        answer: "В анкете страны запрещены реальные компании и бренды. Все элементы должны быть вымышленными и соответствовать игровому миру."
-    },
-    {
-        keywords: ["компания", "бизнес", "организация", "анкета компании"],
-        answer: `Для создания компании используется хештег #Анкета_для_компании. Нужно указать:
-• Название компании
-• Общий бюджет (1-500.000)
-• Штат сотрудников (1-500)
-• Основную миссию/направление деятельности
-• Генерального директора
-• Логотип компании
-• Фотографию руководителя
-• Ссылку на телеграм-канал компании.`
-    },
-    {
-        keywords: ["бюджет компании", "деньги компании"],
-        answer: "Общий бюджет компании должен быть в диапазоне от 1 до 500.000 единиц."
-    },
-    {
-        keywords: ["сотрудники компании", "штат компании", "персонал"],
-        answer: "Штат сотрудников компании может быть от 1 до 500 человек."
-    },
-    {
-        keywords: ["то", "террорист", "экстремист", "анкета то"],
-        answer: `Для анкеты Т.О. используется хештег #анкета_для_ТО. Нужно заполнить:
-• Название организации
-• Количество бюджета (100.000-15млн)
-• Численность войск (100-15.000)
-• Количество танков (0-40)
-• Количество вертолётов (0-10)
-• Количество БТР (0-50)
-• Количество беспилотников (0-30)
-• Количество машин (0-65)
-• ФИО Главы
-• Флаг
-• Фото главы
-• Цель
-• Религию
-• Ссылку на телеграм-канал Т.О.`
-    },
-    {
-        keywords: ["чвк", "частная военная", "наемники", "анкета чвк"],
-        answer: "Для анкеты ЧВК используется хештег #анкета_для_военного_ЧВК. Отличается от анкеты Т.О. другими лимитами на технику и бюджет, а также наличием поля 'Основная цель' вместо 'Цель' и 'Религия'."
-    },
-    {
-        keywords: ["бюджет чвк"],
-        answer: "Бюджет ЧВК должен быть в диапазоне от 200.000 до 55 миллионов единиц."
-    },
-    {
-        keywords: ["армия чвк"],
-        answer: "ЧВК может иметь от 1000 до 10.000 солдат."
-    },
-    {
-        keywords: ["танки чвк"],
-        answer: "ЧВК может иметь от 0 до 50 танков."
-    },
-    {
-        keywords: ["вертолеты чвк", "вертолёты чвк"],
-        answer: "ЧВК может иметь от 0 до 25 вертолётов."
-    },
-    {
-        keywords: ["бтр чвк"],
-        answer: "ЧВК может иметь от 0 до 85 бронетранспортёров."
-    },
-    {
-        keywords: ["беспилотники чвк"],
-        answer: "ЧВК может иметь от 0 до 40 беспилотников."
-    },
-    {
-        keywords: ["машины чвк"],
-        answer: "ЧВК может иметь от 0 до 75 машин."
-    },
-    {
-        keywords: ["наказание", "нарушение", "мут", "бан", "варн", "токсичность наказание"],
-        answer: "За нарушения правил предусмотрены различные наказания: муты (временные ограничения), варны (предупреждения) или бан (полное исключение). Конкретное наказание зависит от тяжести нарушения."
-    },
-    {
-        keywords: ["правило 1.2", "религиозные споры"],
-        answer: "Запрещено поднимать политические и религиозные споры, провоцировать и оскорблять религию, что может задеть игрока. Наказание: мут до 2-х дней или варн."
-    },
-    {
-        keywords: ["правило 1.3", "реклама"],
-        answer: "Реклама других проектов без разрешения администрации. Наказание: мут до недели или 2 варна."
-    },
-    {
-        keywords: ["правило 1.4", "угрозы", "докс", "деанон"],
-        answer: "Запрещены угрозы докса, деанона и свата, а также распространение вредоносного ПО. Наказание: мут до 4-х недель или бан."
-    },
-    {
-        keywords: ["правило 1.5", "оскорбления", "родословная"],
-        answer: "Запрещено любое упоминание родословной игрока в плохих смыслах. Наказание: мут до недели или 2 варна."
-    },
-    {
-        keywords: ["нон-рп поведение", "нон рп", "нарушение рп", "что такое нон рп"],
-        answer: "Нон-РП (нереалистичное ведение игры) — это поведение, выходящее за рамки ролевой игры, не соответствующее игровой реальности. Наказание: мут до недели, отстранение от РП или варн."
-    },
-    {
-        keywords: ["правило 1.7", "спам", "флуд"],
-        answer: "Запрещены спам и флуд сообщениями, стикерами, гифами, реакциями и т.д. Наказание: мут до месяца или бан."
-    },
-    {
-        keywords: ["правило 1.8", "nsfw"],
-        answer: "Запрещено публиковать NSFW контент, сцены насилия и жестокости. Наказание: мут до 4-х месяцев или бан."
-    },
-    {
-        keywords: ["правило 1.9", "личные данные"],
-        answer: "Запрещено распространять личные данные без разрешения игрока. Наказание: бан или мут до 3-х месяцев."
-    },
-    {
-        keywords: ["правило 2.0"],
-        answer: "Запрещено специально нарушать правила проекта."
-    },
-    {
-        keywords: ["телеграм каналы", "правило про телеграм каналы"],
-        answer: "Частные каналы запрещены, их нужно делать публичными. Если это невозможно, необходимо оставлять ссылку на канал под каждым постом."
-    },
-    {
-        keywords: ["метагейм", "мета", "внеигровая информация", "метагейминг"],
-        answer: "Метагейм — это использование внеигровой информации в игре. Например, использование знаний игрока, которые не доступны его персонажу. Это запрещено и нарушает immersion игрового процесса."
-    },
-    {
-        keywords: ["щит новичка", "защита", "начальная защита"],
-        answer: "Защита на 7 дней для новых игроков (страны/ЧВК/Т.О.), во время которой на них нельзя нападать. Снимается, если игрок сам нападает на кого-то."
-    },
-    {
-        keywords: ["ядерное оружие", "ядерка", "атомное оружие", "ядерное оружие этапы"],
-        answer: `Создание ядерного оружия включает этапы:
-1) Исследования (2-3 года, 250 млн$)
-2) Материалы (2 года, 5 млрд$)
-3) Заряд (3 года, 100-150 млн$)
-4) Испытания (1 млн$)
-5) Доставка (2 года, 200 млн$)
-Общее время: ~10 лет, затраты: ~5,1 млрд$.`
-    },
-    {
-        keywords: ["типы ядерных зарядов"],
-        answer: "Имплозивный тип (более эффективный, 150 млн$) и пушечный тип (проще, но менее эффективен, 100 млн$)."
-    },
-    {
-        keywords: ["сокращение времени ядерного оружия", "как ускорить создание ядерного оружия"],
-        answer: "Наличие научно-технической базы сокращает время на 5 лет и уменьшает затраты вдвое. Внешние ограничения увеличивают время на 2 года и удваивают затраты."
-    },
-    {
-        keywords: ["кто создал", "кто разработал", "автор", "владелец", "кто владелец гринвель рп"],
-        answer: "Владелец Гринвель РП - Крутой Висказ. Меня создал Вилсон из Wilson Organization, чтобы я помогал игрокам разбираться в механике игры."
-    },
-    {
-        keywords: ["кто создал анкеты", "кто создал анкеты для военной техники", "гойдович"],
-        answer: "Анкеты для военной техники делал Гойдович."
-    },
-    {
-        keywords: ["какой год", "текущий год", "сейчас год", "игровое время"],
-        answer: `Сейчас ${new Date().getFullYear()} год. В игровом времени Гринвель РП используется особая система: 1 игровой год = 3 реальных дня (по МСК). Год разделен на 3 фазы по 4 месяца, каждый месяц соответствует 6 часам реального времени.`
-    },
-    {
-        keywords: ["советы", "новичок", "начать", "рекомендации"],
-        answer: `Советы для новичков:
-1) Внимательно изучите правила
-2) Начните с небольшой страны
-3) Установите дипломатические отношения
-4) Развивайте экономику
-5) Не нарушайте правила
-6) Используйте 'щит новичка' для защиты
-7) Общайтесь с опытными игроками.`
-    },
-    {
-        keywords: ["война", "конфликт", "нападение", "атака", "как начать войну", "начало войны"],
-        answer: "Для начала войны нужно опубликовать РП-пост с объявлением войны (кроме случаев внезапного нападения) и участие администратора 'Вердер'. Важно учитывать местность, климат и логистику."
-    },
-    {
-        keywords: ["ошибки в войне"],
-        answer: "Самоверд (игнорирование вердера), игнорирование местности и климата, игнорирование поставок и их уязвимостей."
-    },
-    {
-        keywords: ["автокапитуляция"],
-        answer: "Условия автокапитуляции: игрок не участвует в войне в течение 24 часов; вышел из войны и не хочет возвращаться; аннулировал свои территории; передал страну другому игроку; задерживает войну более 2 дней."
-    },
-    {
-        keywords: ["как воевать с afk страной", "война с afk"],
-        answer: "Нужно нарисовать карту, сделать 3 хода, после чего война продолжается без вердера. AFK-статус присваивается, если игрок не активничал неделю, вышел из группы или удалил аккаунт."
-    },
-    {
-        keywords: ["колонизация", "колония", "территория", "экспедиция", "колонизация правила"],
-        answer: "Колонизация позволяет расширить свои территории. Экспедиция длится 4 дня. Можно колонизировать до 10 провинций. Союзные государства - до 14 клеток. Автономии не могут колонизировать. Колонизации не накапливаются и не передаются."
-    },
-    {
-        keywords: ["этапы колонизации"],
-        answer: "1) Определение цели, 2) Выполнение предусловий (исследование региона), 3) Отправка экспедиции, 4) Основание колонии, 5) Взаимодействие с коренными народами (дипломатия, ассимиляция или конфликт)."
-    },
-    {
-        keywords: ["перенос территорий"],
-        answer: "Странам запрещено переносить свои территории. ЧВК и Т.О. могут переносить территории и основаться на новых, но при этом откатывается 50% прогресса."
-    },
-    {
-        keywords: ["санкции", "причины санкций", "механика санкций", "последствия санкций"],
-        answer: `Санкции вводятся за нападение, применение запрещённого оружия или отказ от соглашений.
-Механика: написать пост с указанием затронутых отраслей и причин.
-Последствия:
-• Для нарушителя: снижение экономики, риск восстаний, потеря партнёров.
-• Для инициатора: потеря партнёров и доходов.`
-    },
-    {
-        keywords: ["стартовое вооружение"],
-        answer: "Это вооружение, выдаваемое стране/ЧВК/Т.О. в начале игры. Оно не сильно развито и находится на уровне 1970-1980 годов для баланса."
-    },
-    {
-        keywords: ["названия техники", "анкеты техники"],
-        answer: "Если используется ненастоящее название реальной техники, необходимо в конце анкеты уточнить её реальное название во избежание путаницы."
-    },
-    {
-        keywords: ["использование ии", "использование ии в войне"],
-        answer: "Запрещено использование ИИ для написания ходов в войне, даже для 'улучшения' своего хода. Вердер вправе откатить или пропустить такой ход."
-    },
-    {
-        keywords: ["коррупция", "коррупция наказание", "коррупция в администрации"],
-        answer: "За взятки администратор снимается с должности, а игрок получает бан на 3 месяца (срок может варьироваться в зависимости от ситуации)."
-    },
-    {
-        keywords: ["сколько сущностей", "сколько сущностей у игрока"],
-        answer: "Одному игроку запрещено создавать несколько сущностей. Разрешено иметь только одну: либо страну, либо Т.О., либо ЧВК."
-    },
-    {
-        keywords: ["нон-рп тайм"],
-        answer: "Игрок может использовать НОН-РП тайм только 2 раза за 2 дня. Запрещено уходить в НОН-РП тайм во время войны. При уходе можно передать страну другому игроку или уйти в отпуск, уведомив администрацию."
-    },
-    {
-        keywords: ["администрация", "кто такая администрация", "администрация чата"],
-        answer: "Администрация — это команда лиц, назначенных для поддержания порядка, соблюдения правил и развития сообщества. Действует на добровольных началах, но обязана соблюдать нормы устава."
-    },
-    {
-        keywords: ["права администрации"],
-        answer: "Удалять сообщения, нарушающие правила; выдавать предупреждения и муты; назначать и снимать модераторов (с уровня 'заместитель'); проводить опросы и мероприятия; интерпретировать спорные ситуации."
-    },
-    {
-        keywords: ["обязанности администрации"],
-        answer: "Следить за соблюдением правил; быть вежливыми и беспристрастными; не злоупотреблять правами; участвовать в обсуждениях; быстро реагировать на жалобы; поддерживать активность и здоровую атмосферу."
-    },
-    {
-        keywords: ["запрещено администрации"],
-        answer: "Использовать функции для личной выгоды или мести; удалять/блокировать без причин; изменять ключевые настройки без согласования; пропагандировать личные проекты; оскорблять участников."
-    },
-    {
-        keywords: ["жалоба на администратора", "report admin"],
-        answer: "Жалобу на админа можно подать через @ReportgreenwellADMbot"
-    },
-    {
-        keywords: ["жалоба на игрока", "report player"],
-        answer: "Жалобу на игрока можно подать через @ReportPlayerGR_bot"
-    },
-    {
-        keywords: ["обратиться за помощью"],
-        answer: "Следует обращаться к сотрудникам с префиксом 'Вердер', 'Механик', 'Админ', 'Модератор' или 'Тех. Админ'."
-    }
-];
+        /* === GLOBAL STATE === */
+        let currentSessionId = null;
+        let sessions = {};
+        let messageId = 0;
+        let isInitialized = false;
 
-        // Общие ответы для вопросов без точного совпадения
-        const generalResponses = [
-            "Интересный вопрос! В контексте Greenwel RP это можно интерпретировать по-разному в зависимости от вашей роли и текущей игровой ситуации.",
-            "Отличный вопрос! Для более точного ответа мне нужно больше контекста. Можете уточнить детали?",
-            "В мире Greenwel RP это зависит от многих факторов: вашей страны, её союзников, экономического развития и военной мощи. Конкретная ситуация может варьироваться.",
-            "Как ИИ помощник, я рекомендую уточнить этот вопрос у администрации проекта, чтобы получить наиболее точный ответ в соответствии с текущими правилами.",
-            "В рамках Greenwel RP это можно реализовать несколькими способами. Какой аспект вас интересует больше?",
-            "Это зависит от конкретных обстоятельств в вашей ролевой игре. Могли бы вы уточнить контекст или привести пример?",
-            "В Greenwel RP важно соблюдать баланс между реализмом и игровым процессом. Ваш вопрос затрагивает интересный аспект игры, который может иметь разные трактовки!",
-            "Учитывая механику Greenwel RP, это можно реализовать следующим образом... Но для более точного ответа нужны детали вашей ситуации.",
-            "Интересная мысль! В рамках проекта это можно обыграть через систему анкет и взаимодействие с другими игроками. Хотите узнать больше о конкретном механизме?",
-            "Как представитель Wilson Organization, я рекомендую ознакомиться с соответствующим разделом правил или обратиться к администрации для точного ответа на ваш вопрос."
-        ];
+        /* === DOM ELEMENTS (cached after DOM load) === */
+        let chatBox, userInput, sendBtn, typingIndicator, historyList, historyPanel, overlay;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Элементы DOM
-            const chatInput = document.getElementById('chatInput');
-            const sendBtn = document.getElementById('sendBtn');
-            const chatMessages = document.getElementById('chatMessages');
-            const typingIndicator = document.getElementById('typingIndicator');
-            const clearSessionBtn = document.getElementById('clearSessionBtn');
-            const sessionIdElement = document.getElementById('sessionId');
-            const newChatBtn = document.getElementById('newChatBtn');
-            const exportChatBtn = document.getElementById('exportChatBtn');
-            const overlay = document.getElementById('overlay');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            
-            // Генерация ID сессии
-            let sessionId = localStorage.getItem('greenai_session_id');
-            if (!sessionId) {
-                sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('greenai_session_id', sessionId);
+        /* === KNOWLEDGE BASE === */
+        const knowledgeBase = {
+            "yellowstone": {
+                keywords: ["йеллоустон", "yellowstone", "йеллоустоун", "йеллоустонский"],
+                answer: "Йеллоустон — национальный парк в США, расположенный над одной из крупнейших вулканических систем мира. Это активный супервулкан с геотермальной зоной: более 500 гейзеров, горячие источники, грязевые котлы и фумаролы."
+            },
+            "long_valley": {
+                keywords: ["лонг велли", "long valley", "лонг-велли", "лонгвелли"],
+                answer: "Лонг-Велли — крупная кальдера в восточной Калифорнии, образованная ~760 000 лет назад мощным извержением, выбросившим более 600 км³ материала. Сейчас это зона геотермальной активности."
+            },
+            "valles": {
+                keywords: ["валлес", "valles", "кальдера валлес"],
+                answer: "Кальдера Валлес в Нью-Мексико — одна из крупнейших на Земле. Образовалась двумя извержениями: 1.61 и 1.23 млн лет назад. Диаметр ~22 км, активна геотермально."
+            },
+            "caldera": {
+                keywords: ["кальдера", "caldera", "вулканическая впадина", "кальдеры"],
+                answer: "Кальдера — вулканическая впадина, образовавшаяся после обрушения магматической камеры при мощном извержении. Диаметры достигают 50+ км. Примеры: Йеллоустон, Тоба, Айра."
+            },
+            "geysers": {
+                keywords: ["гейзер", "гейзеры", "старый служака", "old faithful", "пароход", "steamboat", "великий фонтан"],
+                answer: "В Йеллоустоне 500+ гейзеров. Старый Служака извергается каждые 60-110 мин. Пароход — самый высокий в мире (до 120 м). Также: Великий Фонтан, Гигант, Лайон."
+            },
+            "yellowstone_location": {
+                keywords: ["где йеллоустон", "йеллоустон где", "location yellowstone", "штат йеллоустон", "вайоминг йеллоустон"],
+                answer: "Йеллоустонский нацпарк: 96% в Вайоминге, 3% в Монтане, 1% в Айдахо. Основан в 1872 году — первый национальный парк в мире."
+            },
+            "yellowstone_eruption": {                keywords: ["извержение йеллоустон", "если йеллоустон взорвётся", "последствия йеллоустон", "supereruption", "супервулкан"],
+                answer: "Полномасштабное извержение Йеллоустона покроет пеплом большую часть США, нарушит климат на годы. Но вероятность в ближайшие тысячелетия крайне мала. Мониторинг ведётся постоянно."
             }
-            sessionIdElement.textContent = sessionId;
+        };
+
+        const defaultResponse = "Я пока не обучен отвечать на этот вопрос. Попробуйте спросить о вулканах, кальдерах или гейзерах. Например: «Что такое кальдера?» или «Где находится Йеллоустон?»";
+
+        /* === SMART RESPONSE === */
+        function findResponse(text) {
+            const lower = text.toLowerCase().trim();
             
-            // Загрузка истории чата
-            let chatHistory = JSON.parse(localStorage.getItem(`greenai_chat_${sessionId}`)) || [];
+            // 1. Direct keyword match
+            for (let key in knowledgeBase) {
+                const entry = knowledgeBase[key];
+                if (entry.keywords) {
+                    for (let kw of entry.keywords) {
+                        if (lower.includes(kw)) return entry.answer;
+                    }
+                }
+            }
             
-            // Восстановление истории чата
-            if (chatHistory.length > 0) {
-                chatHistory.forEach(msg => {
-                    // Преобразуем число (timestamp) обратно в объект Date
-                    const dateObject = new Date(msg.timestamp);
-                    addMessageToChat(msg.text, msg.sender, dateObject, false);
+            // 2. Pattern: "что такое X" → find X in keywords
+            if (/что такое|расскажи про|объясни|что значит|что это/i.test(lower)) {
+                for (let key in knowledgeBase) {
+                    const entry = knowledgeBase[key];
+                    if (entry.keywords) {
+                        for (let kw of entry.keywords) {
+                            if (lower.includes(kw)) return entry.answer;
+                        }
+                    }
+                }
+            }
+            
+            return defaultResponse;
+        }
+
+        /* === SESSION MANAGEMENT === */
+        function generateSessionId() {
+            return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+        }
+
+        function loadSessions() {
+            try {
+                const saved = localStorage.getItem('wilson_sessions');
+                if (saved) sessions = JSON.parse(saved);
+            } catch(e) { console.warn('Session load error:', e); sessions = {}; }
+        }
+
+        function saveSessions() {
+            try {                localStorage.setItem('wilson_sessions', JSON.stringify(sessions));
+            } catch(e) { console.warn('Session save error:', e); }
+        }
+
+        function createNewSession(title = null) {
+            if (currentSessionId && sessions[currentSessionId]) {
+                saveCurrentSession();
+            }
+            
+            const newId = generateSessionId();
+            sessions[newId] = {
+                id: newId,
+                title: title || 'Новый чат',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                messages: []
+            };
+            
+            currentSessionId = newId;
+            saveSessions();
+            renderHistoryList();
+            clearChatUI();
+            
+            setTimeout(() => {
+                addMessage("Система Wilson активирована. О чём вы хотите узнать?", 'bot', false);
+            }, 400);
+            
+            return newId;
+        }
+
+        function saveCurrentSession() {
+            if (!currentSessionId || !sessions[currentSessionId]) return;
+            
+            const session = sessions[currentSessionId];
+            session.updatedAt = new Date().toISOString();
+            
+            if (session.title === 'Новый чат' && session.messages.length === 0) {
+                const firstUser = Array.from(chatBox.querySelectorAll('.message-group.user'))[0];
+                if (firstUser) {
+                    const text = firstUser.querySelector('.message-bubble')?.textContent || '';
+                    session.title = text.slice(0, 35) + (text.length > 35 ? '...' : '') || 'Новый чат';
+                }
+            }
+            
+            session.messages = Array.from(chatBox.querySelectorAll('.message-group')).map(group => ({
+                sender: group.classList.contains('user') ? 'user' : 'bot',
+                text: group.querySelector('.message-bubble')?.dataset.text || '',
+                timestamp: group.querySelector('.timestamp')?.textContent || ''
+            }));
+                        saveSessions();
+        }
+
+        function loadSession(sessionId) {
+            if (currentSessionId) saveCurrentSession();
+            
+            currentSessionId = sessionId;
+            const session = sessions[sessionId];
+            if (!session) return;
+            
+            clearChatUI();
+            
+            for (let msg of session.messages) {
+                const group = createMessageGroup(msg.text, msg.sender, false);
+                const bubble = group.querySelector('.message-bubble');
+                bubble.textContent = msg.text;
+                bubble.dataset.text = msg.text;
+                if (msg.timestamp) group.querySelector('.timestamp').textContent = msg.timestamp;
+                chatBox.appendChild(group);
+            }
+            
+            renderHistoryList();
+            scrollToBottom();
+        }
+
+        function deleteSession(sessionId, e) {
+            e?.stopPropagation?.();
+            if (!confirm('Удалить эту сессию?')) return;
+            
+            delete sessions[sessionId];
+            saveSessions();
+            
+            if (sessionId === currentSessionId) {
+                const ids = Object.keys(sessions);
+                if (ids.length > 0) loadSession(ids[0]);
+                else createNewSession();
+            } else {
+                renderHistoryList();
+            }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('⚠️ Удалить ВСЮ историю? Это нельзя отменить.')) return;
+            sessions = {};
+            currentSessionId = null;
+            localStorage.removeItem('wilson_sessions');
+            createNewSession();
+        }
+
+        function renderHistoryList() {            if (!historyList) return;
+            historyList.innerHTML = '';
+            
+            const sorted = Object.values(sessions).sort((a,b) => 
+                new Date(b.updatedAt) - new Date(a.updatedAt)
+            );
+            
+            if (sorted.length === 0) {
+                historyList.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:30px;font-size:0.9rem">Нет сохранённых чатов</div>';
+                return;
+            }
+            
+            for (let session of sorted) {
+                const item = document.createElement('div');
+                item.className = `history-item ${session.id === currentSessionId ? 'active' : ''}`;
+                item.onclick = () => loadSession(session.id);
+                
+                const date = new Date(session.updatedAt);
+                const dateStr = date.toLocaleDateString('ru-RU', { 
+                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' 
                 });
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                const userMsgs = session.messages?.filter(m => m.sender === 'user').length || 0;
+                
+                item.innerHTML = `
+                    <div class="history-item-title">${escapeHtml(session.title)}</div>
+                    <div class="history-item-meta">
+                        <span>${dateStr}</span>
+                        <span>${userMsgs} сообщ.</span>
+                    </div>
+                `;
+                
+                if (window.innerWidth > 768) {
+                    item.style.position = 'relative';
+                    const btn = document.createElement('button');
+                    btn.innerHTML = '×';
+                    btn.style.cssText = `
+                        position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                        background:none;border:none;color:var(--text-muted);
+                        cursor:pointer;font-size:1.1rem;opacity:0;transition:0.2s;
+                        width:24px;height:24px;border-radius:6px;
+                        display:flex;align-items:center;justify-content:center;
+                    `;
+                    btn.onclick = (e) => deleteSession(session.id, e);
+                    item.onmouseenter = () => btn.style.opacity = '1';
+                    item.onmouseleave = () => btn.style.opacity = '0';
+                    item.appendChild(btn);
+                }
+                
+                historyList.appendChild(item);            }
+        }
+
+        function toggleHistory(show) {
+            if (!historyPanel || !overlay) return;
+            
+            if (show) {
+                historyPanel.classList.add('open');
+                overlay.classList.add('active');
+                document.getElementById('btnHistory')?.classList.add('active');
+                document.getElementById('btnChat')?.classList.remove('active');
+                renderHistoryList();
+            } else {
+                historyPanel.classList.remove('open');
+                overlay.classList.remove('active');
+                document.getElementById('btnHistory')?.classList.remove('active');
+                document.getElementById('btnChat')?.classList.add('active');
+            }
+        }
+
+        function exportChat() {
+            if (!currentSessionId || !sessions[currentSessionId]) {
+                showTemporaryFeedback('Нет чата для экспорта', '#faa61a');
+                return;
             }
             
-            // Функция добавления сообщения в чат
-            function addMessageToChat(text, sender, timestamp = new Date(), saveToHistory = true) {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
-                
-                const messageText = document.createElement('div');
-                
-                // Проверяем, содержит ли сообщение математическое выражение
-                const mathResult = evaluateMathExpression(text);
-                if (mathResult !== null && sender === 'user') {
-                    messageText.innerHTML = `${text}<div class="math-result">= ${mathResult}</div>`;
-                } else {
-                    messageText.textContent = text;
-                }
-                
-                const messageInfo = document.createElement('div');
-                messageInfo.classList.add('message-info');
-                
-                const senderSpan = document.createElement('span');
-                senderSpan.textContent = sender === 'user' ? 'Вы' : 'GreenAI';
-                
-                const timeSpan = document.createElement('span');
-                timeSpan.textContent = formatTime(timestamp);
-                
-                messageInfo.appendChild(senderSpan);
-                messageInfo.appendChild(timeSpan);
-                
-                messageElement.appendChild(messageText);
-                messageElement.appendChild(messageInfo);
-                
-                // Добавляем чипы предложений для ответов ИИ
-                if (sender === 'ai') {
-                    const suggestions = generateSuggestions(text);
-                    if (suggestions.length > 0) {
-                        const suggestionChips = document.createElement('div');
-                        suggestionChips.classList.add('suggestion-chips');
-                        
-                        suggestions.forEach(suggestion => {
-                            const chip = document.createElement('div');
-                            chip.classList.add('suggestion-chip');
-                            chip.textContent = suggestion;
-                            chip.setAttribute('data-question', suggestion);
-                            suggestionChips.appendChild(chip);
-                        });
-                        
-                        messageElement.appendChild(suggestionChips);
-                    }
-                }
-                
-                chatMessages.appendChild(messageElement);
-                
-                if (saveToHistory) {
-                    chatHistory.push({
-                        text,
-                        sender,
-                        timestamp: timestamp.getTime()
-                    });
-                    localStorage.setItem(`greenai_chat_${sessionId}`, JSON.stringify(chatHistory));
-                }
-                
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
+            saveCurrentSession();
+            const session = sessions[currentSessionId];
+            const content = (session.messages || []).map(m => 
+                `[${m.timestamp}] ${m.sender === 'user' ? 'Вы' : 'Wilson'}: ${m.text}`
+            ).join('\n\n');
             
-            // Генерация предложений на основе ответа
-            function generateSuggestions(response) {
-                const suggestions = [];
-                const lowerResponse = response.toLowerCase();
-                
-                if (lowerResponse.includes('стран')) {
-                    suggestions.push("Лимиты для страны", "Создание страны", "Анкета страны");
-                }
-                
-                if (lowerResponse.includes('компани')) {
-                    suggestions.push("Создание компании", "Лимиты компании", "Анкета компании");
-                }
-                
-                if (lowerResponse.includes('правил') || lowerResponse.includes('нарушен')) {
-                    suggestions.push("Наказания за нарушения", "Что запрещено?", "Метагейм");
-                }
-                
-                if (lowerResponse.includes('анкет')) {
-                    suggestions.push("Пример анкеты", "Обязательные поля", "Ошибки в анкетах");
-                }
-                
-                if (suggestions.length === 0) {
-                    suggestions.push("Что такое Гринвель?", "Как начать играть?", "Советы новичкам");
-                }
-                
-                return suggestions.slice(0, 3);
-            }
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wilson-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
             
-            // Форматирование времени
-            function formatTime(date) {
-                const now = new Date();
-                const diff = now - date;
-                
-                if (diff < 60000) {
-                    return 'только что';
-                } else if (diff < 3600000) {
-                    const minutes = Math.floor(diff / 60000);
-                    return `${minutes} мин. назад`;
-                } else if (diff < 86400000) {
-                    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-                } else {
-                    return date.toLocaleDateString('ru-RU');
+            showTemporaryFeedback('Чат экспортирован!', '#34c759');
+        }
+
+        /* === MESSAGE FUNCTIONS === */
+        function formatTime(date) {
+            return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function createMessageGroup(text, sender, shouldType = true) {
+            const group = document.createElement('div');
+            group.className = `message-group ${sender} fade-in`;
+            group.dataset.id = ++messageId;
+            
+            const isBot = sender === 'bot';
+            const avatarContent = isBot 
+                ? `<img src="wilson.png" alt="W" onerror="this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>W</div>'">`
+                : `<div class="avatar-fallback">Вы</div>`;
+            
+            group.innerHTML = `
+                <div class="message-avatar">${avatarContent}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="username">${isBot ? 'Wilson AI' : 'Вы'}</span>
+                        <span class="timestamp">${formatTime(new Date())}</span>
+                    </div>
+                    <div class="message-bubble"></div>
+                    <div class="message-actions">
+                        <button class="action-btn" onclick="copyMessage(${messageId})" title="Копировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="action-btn" onclick="toggleLike(this)" title="Реакция">
+                            <i class="far fa-heart"></i>
+                            <span class="reaction-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return group;
+        }
+
+        function addMessage(text, sender, shouldType = true) {
+            const group = createMessageGroup(text, sender, shouldType);
+            const bubble = group.querySelector('.message-bubble');
+            
+            chatBox.appendChild(group);
+            
+            if (sender === 'bot' && shouldType) {
+                typeWriter(text, bubble);
+            } else {
+                bubble.textContent = text;
+                bubble.dataset.text = text;
+            }
+                        scrollToBottom();
+            
+            if (currentSessionId) {
+                setTimeout(saveCurrentSession, 800);
+            }
+        }
+
+        function typeWriter(text, element) {
+            let i = 0;
+            const speed = 18;
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    setTimeout(type, speed);
                 }
             }
+            type();
+        }
+
+        function scrollToBottom() {
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function clearChatUI() {
+            if (chatBox) chatBox.innerHTML = '';
+            messageId = 0;
+        }
+
+        function copyMessage(id) {
+            const bubble = document.querySelector(`[data-id="${id}"] .message-bubble`);
+            if (bubble?.dataset.text) {
+                navigator.clipboard.writeText(bubble.dataset.text);
+                showTemporaryFeedback('Скопировано!', '#34c759');
+            }
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const icon = btn.querySelector('i');
+            const count = btn.querySelector('.reaction-count');
+            let num = parseInt(count.textContent) || 0;
             
-            // Показать индикатор набора сообщения
-            function showTypingIndicator() {
-                typingIndicator.style.display = 'block';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (btn.classList.contains('liked')) {
+                icon.className = 'fas fa-heart';
+                count.textContent = num + 1;
+                showTemporaryFeedback('❤️ Реакция', '#ff4757');
+            } else {                icon.className = 'far fa-heart';
+                count.textContent = Math.max(0, num - 1);
+            }
+        }
+
+        function showTemporaryFeedback(text, color) {
+            const fb = document.createElement('div');
+            fb.textContent = text;
+            fb.style.cssText = `
+                position:fixed;bottom:120px;left:50%;transform:translateX(-50%);
+                background:${color};color:white;padding:10px 18px;
+                border-radius:12px;font-size:0.85rem;z-index:200;
+                box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeIn 0.2s ease;
+            `;
+            document.body.appendChild(fb);
+            setTimeout(() => {
+                fb.style.opacity = '0';
+                fb.style.transition = 'opacity 0.2s';
+                setTimeout(() => fb.remove(), 200);
+            }, 1800);
+        }
+
+        /* === INPUT HANDLING === */
+        function handleInput() {
+            if (!userInput || !sendBtn) return;
+            
+            // Auto-resize
+            userInput.style.height = 'auto';
+            userInput.style.height = Math.min(userInput.scrollHeight, 140) + 'px';
+            
+            // Enable/disable send
+            sendBtn.disabled = userInput.value.trim() === '';
+        }
+
+        function sendMessage() {
+            if (!userInput) return;
+            const text = userInput.value.trim();
+            if (text === "" || !sendBtn || sendBtn.disabled) return;
+
+            addMessage(text, 'user');
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            sendBtn.disabled = true;
+            userInput.focus();
+
+            if (typingIndicator) {
+                typingIndicator.classList.add('active');
+                scrollToBottom();
+            }
+            const delay = Math.floor(Math.random() * 700) + 500;
+
+            setTimeout(() => {
+                if (typingIndicator) typingIndicator.classList.remove('active');
+                
+                const response = findResponse(text);
+                addMessage(response, 'bot');
+
+            }, delay);
+        }
+
+        /* === INITIALIZATION === */
+        function initApp() {
+            // Cache DOM elements
+            chatBox = document.getElementById('chatBox');
+            userInput = document.getElementById('userInput');
+            sendBtn = document.getElementById('sendBtn');
+            typingIndicator = document.getElementById('typingIndicator');
+            historyList = document.getElementById('historyList');
+            historyPanel = document.getElementById('historyPanel');
+            overlay = document.getElementById('overlay');
+            
+            if (!chatBox || !userInput || !sendBtn) {
+                console.error('Critical DOM elements not found');
+                return;
             }
             
-            // Скрыть индикатор набора сообщения
-            function hideTypingIndicator() {
-                typingIndicator.style.display = 'none';
-            }
-            
-            // Обработка математических выражений
-            function evaluateMathExpression(expression) {
-                expression = expression.replace(/\s/g, '');
-                
-                // Проверка на процент
-                const percentMatch = expression.match(/(\d+)%от(\d+)/i);
-                if (percentMatch) {
-                    const percent = parseFloat(percentMatch[1]);
-                    const number = parseFloat(percentMatch[2]);
-                    return (percent / 100) * number;
-                }
-                
-                // Замена ^ на ** для возведения в степень
-                expression = expression.replace(/\^/g, '**');
-                
-                // Проверка на безопасность выражения
-                const safeExpression = expression.replace(/[^0-9+\-*/().%]/g, '');
-                if (safeExpression !== expression) return null;
-                
-                try {
-                    return Function(`"use strict"; return (${safeExpression})`)();
-                } catch (e) {
-                    return null;
-                }
-            }
-            
-            // Улучшенный поиск ответа по ключевым словам (с учетом опечаток)
-            function findAnswerInKnowledgeBase(question) {
-                const lowerQuestion = question.toLowerCase();
-                
-                // Поиск по ключевым словам (даже с опечатками)
-                for (const item of knowledgeBase) {
-                    for (const keyword of item.keywords) {
-                        // Проверяем наличие ключевого слова (целиком или частично)
-                        if (lowerQuestion.includes(keyword) || 
-                            keyword.includes(lowerQuestion) || 
-                            lowerQuestion.split(' ').some(word => keyword.includes(word)) ||
-                            keyword.split(' ').some(word => lowerQuestion.includes(word))) {
-                            return item.answer;
-                        }
-                    }
-                }
-                
-                // Поиск по отдельным словам (для вопросов с опечатками)
-                const words = lowerQuestion.split(/\s+/);
-                for (const word of words) {
-                    if (word.length < 3) continue; // Пропускаем короткие слова
-                    
-                    for (const item of knowledgeBase) {
-                        for (const keyword of item.keywords) {
-                            // Проверяем схожесть слов (простой алгоритм)
-                            if (isSimilar(word, keyword) || isSimilar(keyword, word)) {
-                                return item.answer;
-                            }
-                        }
-                    }
-                }
-                
-                return null;
-            }
-            
-            // Простая функция проверки схожести слов (для обработки опечаток)
-            function isSimilar(word1, word2) {
-                if (Math.abs(word1.length - word2.length) > 2) return false;
-                
-                // Проверяем прямое включение
-                if (word1.includes(word2) || word2.includes(word1)) return true;
-                
-                // Проверяем совпадение первых 3-4 символов
-                if (word1.length > 3 && word2.length > 3) {
-                    if (word1.substring(0, 4) === word2.substring(0, 4)) return true;
-                    if (word1.substring(0, 3) === word2.substring(0, 3)) return true;
-                }
-                
-                return false;
-            }
-            
-            // Генерация ответа ИИ
-            function generateAIResponse(userMessage) {
-                return new Promise((resolve) => {
-                    showTypingIndicator();
-                    
-                    // Имитация задержки ответа
-                    const delay = 800 + Math.random() * 1200;
-                    
-                    setTimeout(() => {
-                        hideTypingIndicator();
-                        
-                        // Проверка на математические выражения
-                        const mathResult = evaluateMathExpression(userMessage);
-                        if (mathResult !== null) {
-                            resolve(`Результат вычисления: ${mathResult}`);
-                            return;
-                        }
-                        
-                        // Поиск ответа в базе знаний
-                        const knowledgeAnswer = findAnswerInKnowledgeBase(userMessage);
-                        if (knowledgeAnswer) {
-                            resolve(knowledgeAnswer);
-                            return;
-                        }
-                        
-                        // Умные ответы на общие вопросы
-                        if (userMessage.toLowerCase().includes('привет') || userMessage.toLowerCase().includes('здравств')) {
-                            resolve("Привет! Я GreenAI, готов помочь вам с вопросами о Greenwel RP. Что вас интересует?");
-                            return;
-                        }
-                        
-                        if (userMessage.toLowerCase().includes('как дела') || userMessage.toLowerCase().includes('как ты')) {
-                            resolve("У меня всё отлично! Готов помочь вам с вопросами о Greenwel RP. Чем могу помочь?");
-                            return;
-                        }
-                        
-                        if (userMessage.toLowerCase().includes('спасибо') || userMessage.toLowerCase().includes('благодар')) {
-                            resolve("Пожалуйста! Всегда рад помочь. Если у вас есть еще вопросы - обращайтесь!");
-                            return;
-                        }
-                        
-                        // Случайный общий ответ
-                        resolve(generalResponses[Math.floor(Math.random() * generalResponses.length)]);
-                    }, delay);
-                });
-            }
-            
-            // Обработчик отправки сообщения
-            sendBtn.addEventListener('click', async function() {
-                const message = chatInput.value.trim();
-                if (message) {
-                    addMessageToChat(message, 'user');
-                    chatInput.value = '';
-                    chatInput.style.height = 'auto';
-                    
-                    const response = await generateAIResponse(message);
-                    addMessageToChat(response, 'ai');
-                }
-            });
-            
-            // Обработчик клика по предложениям
-            chatMessages.addEventListener('click', function(e) {
-                if (e.target.classList.contains('suggestion-chip')) {
-                    const question = e.target.getAttribute('data-question');
-                    chatInput.value = question;
-                    sendBtn.click();
-                }
-            });
-            
-            // Отправка сообщения по Enter
-            chatInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
+            // Event listeners
+            userInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    sendBtn.click();
+                    sendMessage();
                 }
             });
             
-            // Автоматическое изменение высоты textarea
-            chatInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
+            // Load sessions and start
+            loadSessions();
             
-            // Очистка истории чата
-            clearSessionBtn.addEventListener('click', function() {
-                if (confirm('Вы уверены, что хотите удалить всю историю переписки?')) {
-                    chatHistory = [];
-                    localStorage.removeItem(`greenai_chat_${sessionId}`);
-                    chatMessages.innerHTML = '';
-                    
-                    addMessageToChat('История чата очищена. Чем могу помочь?', 'ai');
-                }
-            });
+            if (Object.keys(sessions).length === 0) {
+                createNewSession();
+            } else {
+                const recent = Object.values(sessions).sort((a,b) => 
+                    new Date(b.updatedAt) - new Date(a.updatedAt)
+                )[0];
+                loadSession(recent.id);
+            }
             
-            // Новый чат
-            newChatBtn.addEventListener('click', function() {
-                if (confirm('Начать новый чат? Текущая история будет сохранена.')) {
-                    sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('greenai_session_id', sessionId);
-                    sessionIdElement.textContent = sessionId;
-                    
-                    chatHistory = [];
-                    localStorage.removeItem(`greenai_chat_${sessionId}`);
-                    chatMessages.innerHTML = '';
-                    
-                    addMessageToChat('Начата новая сессия. Чем могу помочь?', 'ai');
-                }
-            });
+            // Auto-save on unload
+            window.addEventListener('beforeunload', () => {
+                if (currentSessionId) saveCurrentSession();            });
             
-            // Экспорт чата
-            exportChatBtn.addEventListener('click', function() {
-                const chatText = chatHistory.map(msg => {
-                    const sender = msg.sender === 'user' ? 'Вы' : 'GreenAI';
-                    const date = new Date(msg.timestamp).toLocaleString('ru-RU');
-                    return `[${date}] ${sender}: ${msg.text}`;
-                }).join('\n');
-                
-                const blob = new Blob([chatText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `greenai_chat_${sessionId}.txt`;
-                a.click();
-                
-                URL.revokeObjectURL(url);
-            });
-            
-            // Мобильное меню
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-            });
-            
-            // Закрытие бокового меню при клике на overlay
-            overlay.addEventListener('click', function() {
-                if (sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                    overlay.style.display = 'none';
-                }
-            });
-            
-            // Закрытие меню при клике вне его
-            document.addEventListener('click', function(e) {
-                if (sidebar.classList.contains('active') && 
-                    !sidebar.contains(e.target) && 
-                    e.target !== mobileMenuBtn) {
-                    sidebar.classList.remove('active');
-                    overlay.style.display = 'none';
-                }
-            });
-        });
+            isInitialized = true;
+            console.log('✓ Wilson AI initialized');
+        }
+
+        // Start when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
     </script>
 </body>
 </html>
