@@ -5,7 +5,7 @@
         {
           "text": "Привет! Чем могу помочь сегодня?",
           "probability": 0.5,
-          "images": ["grenforest.jpg"]
+          "images": ["greenforest.jpg"]
         },
         {
           "text": "Здравствуй! Я Faber, готов отвечать на ваши вопросы",
